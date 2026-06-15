@@ -119,7 +119,7 @@ fun AppNavigation() {
                             )
                         },
                         label = {
-                            Text("Resumo")
+                            Text("Nova conta")
                         }
                     )
 
