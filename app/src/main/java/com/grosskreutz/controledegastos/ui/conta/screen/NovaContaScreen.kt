@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -31,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,7 +66,7 @@ fun NovaContaScreen(
 
     var descricao by remember { mutableStateOf("") }
     var valor by remember { mutableStateOf("") }
-    var parcelas by remember { mutableStateOf("") }
+    var parcelas by remember { mutableStateOf("1") }
     var competencia by remember { mutableStateOf("") }
 
     var cartaoSelecionado by remember {
@@ -96,12 +99,20 @@ fun NovaContaScreen(
         )
 
         OutlinedTextField(
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Default,
+                keyboardType = KeyboardType.Decimal
+            ),
             value = valor,
             onValueChange = { valor = it },
             label = { Text("Valor") }
         )
 
         OutlinedTextField(
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Default,
+                keyboardType = KeyboardType.Number
+            ),
             value = parcelas,
             onValueChange = { parcelas = it },
             label = { Text("Parcelas") }
