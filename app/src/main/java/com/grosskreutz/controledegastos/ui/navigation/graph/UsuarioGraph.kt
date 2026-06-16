@@ -23,7 +23,7 @@ fun NavGraphBuilder.usuarioGraph(
                 viewModel.salvarNome(nome)
 
                 navController.navigate(
-                    Destinations.HOME
+                    Destinations.RESUMO
                 ) {
 
                     popUpTo(
