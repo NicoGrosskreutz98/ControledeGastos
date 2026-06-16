@@ -36,4 +36,12 @@ class CartaoViewModel(
             carregar()
         }
     }
+
+    fun update(id: Long, nome: String) {
+        viewModelScope.launch {
+            repository.update(id, nome)
+
+            carregar()
+        }
+    }
 }

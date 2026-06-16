@@ -21,6 +21,19 @@ class CartaoRepository(
         )
     }
 
+    suspend fun update(
+        id: Long,
+        nome: String
+    ) {
+
+        dao.inserir(
+            CartaoEntity(
+                id = id,
+                nome = nome
+            )
+        )
+    }
+
     suspend fun getLista() =
         dao.getCartoesList()
 }

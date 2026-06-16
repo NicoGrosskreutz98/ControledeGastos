@@ -1,6 +1,7 @@
 package com.grosskreutz.controledegastos.ui.conta.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,14 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.grosskreutz.controledegastos.database.entity.CartaoEntity
 import com.grosskreutz.controledegastos.ui.theme.ControleDeGastosTheme
 import org.koin.core.component.getScopeName
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,11 +107,13 @@ fun NovaContaScreen(
             label = { Text("Parcelas") }
         )
 
-        OutlinedTextField(
-            value = competencia,
-            onValueChange = { competencia = it },
-            label = { Text("Primeira cobrança (MM/YYYY)") }
-        )
+        MonthYearPicker { month, year ->
+            competencia = String.format(
+                "%02d/%d",
+                month,
+                year
+            )
+        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -190,6 +197,135 @@ fun NovaContaScreen(
             }
         }
 
+    }
+}
+
+@Composable
+fun MonthYearPicker(
+    initialMonth: Int = Calendar.getInstance().get(Calendar.MONTH) + 1,
+    initialYear: Int = Calendar.getInstance().get(Calendar.YEAR),
+    onSelected: (month: Int, year: Int) -> Unit
+) {
+    var month by remember { mutableStateOf(initialMonth) }
+    var year by remember { mutableStateOf(initialYear) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    var competencia by remember { mutableStateOf("") }
+
+    OutlinedTextField(
+        modifier = Modifier.clickable {
+            showDialog = true
+        },
+        enabled = false,
+        value = competencia,
+        onValueChange = {
+
+        },
+        label = { Text("Primeira cobrança (MM/YYYY)") }
+    )
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        competencia = String.format(
+                            "%02d/%d",
+                            month,
+                            year
+                        )
+                        onSelected(month, year)
+                        showDialog = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            },
+            text = {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+
+                    NumberPicker(
+                        value = month,
+                        range = 1..12,
+                        onValueChange = {
+                            month = it
+                        },
+                        formatter = {
+                            String.format("%02d", it)
+                        }
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(32.dp)
+                    )
+
+                    NumberPicker(
+                        value = year,
+                        range = 2020..2030,
+                        onValueChange = {
+                            year = it
+                        }
+                    )
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun NumberPicker(
+    value: Int,
+    range: IntRange,
+    onValueChange: (Int) -> Unit,
+    formatter: ((Int) -> String)? = null
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        IconButton(
+            onClick = {
+                if (value < range.last) {
+                    onValueChange(value + 1)
+                }
+            }
+        ) {
+            Text("▲")
+        }
+
+
+        Text(
+            text = formatter?.invoke(value)
+                ?: value.toString(),
+            fontSize = 22.sp
+        )
+
+
+        IconButton(
+            onClick = {
+                if (value > range.first) {
+                    onValueChange(value - 1)
+                }
+            }
+        ) {
+            Text("▼")
+        }
     }
 }
 

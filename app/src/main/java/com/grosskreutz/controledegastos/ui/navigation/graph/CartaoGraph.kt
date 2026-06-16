@@ -28,7 +28,10 @@ fun NavGraphBuilder.cartaoGraph() {
 
             onSalvar = {
 
-                viewModel.salvar(it)
+                if (it.id == 0L)
+                    viewModel.salvar(it.nome)
+                else
+                    viewModel.update(it.id, it.nome)
             }
         )
     }
